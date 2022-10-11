@@ -14,12 +14,14 @@ public class Product
     [Required(ErrorMessage = "is required")]
     [Display(Name = "Name")]
     public string Name { get; set; }
+
     [Required(ErrorMessage = "is required")]
     [Display(Name = "Description")]
     public string Description { get; set; }
+    
     [Required(ErrorMessage = "is required")]
     [Display(Name = "Price")]
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 
 
     public DateTime CreatedAt { get; set;} = DateTime.Now;

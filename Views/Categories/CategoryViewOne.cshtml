@@ -1,0 +1,33 @@
+@model Category
+
+
+@* <h1> @ViewBag.SingleCategory.Name </h1> *@
+<div class="container w-75 mx-auto">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center"></h2>
+
+            
+            @* <form href="dishes/create" method="POST"> *@
+            
+                <div class="mb-3">
+                    <ul>
+                        @foreach (var product in ViewBag.AssociatedProducts)
+                            {
+                                <li>@product.Name</li>
+                            }
+                    </ul>
+                </div>
+                <form class="shadow p-3 rounded" asp-controller="Categories" asp-action="AddCategory" method="POST">
+                    <select asp-for="AllProducts" class="mb-4 form-control">
+                        @foreach (Product product in ViewBag.ListedProducts)
+                            {
+                                <option value="@product.ProductId">@product.Name</option>
+                            }
+                    </select>
+                <button class="btn btn-primary w-50" type="submit">Add</button>
+            </form>
+        
+        </div>
+    </div>
+</div>

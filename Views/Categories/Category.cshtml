@@ -1,0 +1,32 @@
+@model Category
+
+<div class="container w-75 mx-auto">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">New Category</h2>
+
+            @* <form href="dishes/create" method="POST"> *@
+            <form class="shadow p-3 rounded" asp-controller="Categories" asp-action="Create" method="POST">
+
+                <div class="mb-3">
+                    <label asp-for="Name"></label>
+                    <span asp-validation-for="Name" class="text-danger font-weight-bold">
+                    </span>
+                    <input class="form-control" asp-for="Name">
+                </div>
+                <button class="btn btn-success">Create</button>
+            </form>
+        </div>
+        <div class="col">
+            <div class="right ps-5">
+                <h2 class="mb-5">All Categories</h2>
+                <ul>
+                    @foreach (Category category in ViewBag.Categories)
+                    {
+                        <li><a href="/categories/@category.CategoryId">@category.Name</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

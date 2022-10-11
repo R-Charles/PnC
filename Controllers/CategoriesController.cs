@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ProductsAndCategories.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductsAndCategories.Controllers;
 public class CategoriesController : Controller
@@ -16,48 +17,85 @@ private MyContext _context;
     //here we can "inject" our context service into the constructor
 
 
-    [HttpGet("")]
-    public IActionResult Index()
+    [HttpGet("Category")]
+    public IActionResult Category()
     {
-        return View("Index");
+        return View("Category");
     }
 
     [HttpGet("/Categories/all")]
     public IActionResult All()
     {
-        List<Product> AllCategories = _context.Categories.ToList();
+        List<Category> AllCategories = _context.Categories.ToList();
+        ViewBag.Categories = AllCategories;
 
-        return View("All", AllCategories);
+        return View("Category");
+    }
+    //returning a view = returning a .cshtml file vs a method
+
+    [HttpPost("/create_category")]
+    public IActionResult Create(Category newCategory)
+    {
+        if (ModelState.IsValid == false)
+        {
+            return View("Category");
+        }
+
+        _context.Add(newCategory);
+        _context.SaveChanges();
+
+        return RedirectToAction("All");
     }
 
-    // [HttpPost("/register")]
-    // public IActionResult Register(Product newProduct)
+    // [HttpGet("/categories/{id}")]
+    // public IActionResult CategoryDetail(int id)
     // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         if (_context.Categories.Any(Product => Product.Email == newProduct.Email))
-    //         {
-    //             ModelState.AddModelError("Email", "is taken");
-    //         }
-    //     }
-    //     if (ModelState.IsValid == false)
-    //     {
-    //         return Index();
-    //     }
+    //     // ViewBag.AllListedCategories = _context.Categories.Include(c => c.CatWithProducts).ThenInclude(p => p.Product).Where(c => !c.CatWithProducts.Any(p => p.ProductId == ProductId));
 
-    //     //now we have to hash
-    //     PasswordHasher<Product> hashBrowns = new PasswordHasher<Product>();
-    //     newProduct.Password = hashBrowns.HashPassword(newProduct, newProduct.Password);
+    //     Category? CatInfoListedProducts = _context.Categories.Include(c => c.AllProducts).ThenInclude(c => c.Products).FirstOrDefault(c => c.CategoryId == id);
+        
+    //     ViewBag.ListedProducts = _context.Products.Include(c => c.AllCategories).ThenInclude(c => c.Categories).Where(p => !p.AllCategories.Any(c => c.CategoryId == id)).ToList();
 
-    //     _context.Add(newProduct);
-    //     _context.SaveChanges();
+    //     ViewBag.AssociatedProducts = _context.Products.Include(c => c.AllCategories).ThenInclude(c => c.Categories).Where(c => c.AllCategories.Any(c => c.CategoryId == id)).ToList();
 
-    //     //now that we've run SaveChanges() we have access to the ProductId from our SQL
-    //     HttpContext.Session.SetInt32("UUID", newProduct.ProductID);
-    //     HttpContext.Session.SetString("Email", newProduct.Email);
 
-    //     return RedirectToAction("All", "Product");
+    //     ViewBag.SingleCategory = _context.Categories.FirstOrDefault(p => p.CategoryId == id);
+
+    //     return View("CategoryViewOne", CatInfoListedProducts);
     // }
+
+    [HttpGet("/categories/{id}")]
+    public IActionResult CategoryDetail(int Id)
+    {
+
+    Category? category = _context.Categories
+        .Include(f => f.AllProducts)
+        .ThenInclude(assoc => assoc.Product)
+        .FirstOrDefault(category => category.CategoryId == Id);
+        if (category == null)
+        {
+            return RedirectToAction("All");
+        }
+
+        ViewBag.UnrelatedProds = _context.Products
+        .Include(c => c.AllCategories)
+        .ThenInclude(a => a.Category)
+        .Where(c => !c.AllCategories
+        .Any(p => p.CategoryId == categoryId));
+
+        return View("OneCategory", category);
+
+    [HttpPost("/categories/add")]
+    public IActionResult AddCatToProduct(Association newAss, int CategoryId)
+    {
+        if(ModelState.IsValid)
+        {
+            _context.Categories.Add( newAss );
+            _context.SaveChanges();
+            return RedirectToAction("CategoryViewOne");
+        }
+        return RedirectToAction("CategoryViewOne", new{CategoryId = CategoryId});
+    }
 
 //     [HttpPost("/login")]
 //     public IActionResult Login(LoginProduct loginProduct)

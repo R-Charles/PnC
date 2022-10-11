@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ProductsAndCategories.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductsAndCategories.Controllers;
 public class ProductsController : Controller
@@ -17,8 +18,11 @@ private MyContext _context;
 
 
     [HttpGet("")]
+    [HttpGet("/products")]
     public IActionResult Index()
     {
+        List<Product> AllProducts = _context.Products.OrderBy(p => p.Name).ToList();
+        ViewBag.Products = AllProducts;
         return View("Index");
     }
 
@@ -30,34 +34,49 @@ private MyContext _context;
         return View("All", AllProducts);
     }
 
-    // [HttpPost("/register")]
-    // public IActionResult Register(Product newProduct)
-    // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         if (_context.Products.Any(Product => Product.Email == newProduct.Email))
-    //         {
-    //             ModelState.AddModelError("Email", "is taken");
-    //         }
-    //     }
-    //     if (ModelState.IsValid == false)
-    //     {
-    //         return Index();
-    //     }
+    [HttpPost("/create/product")]
+    public IActionResult Create(Product newProduct)
+    {
+        if (ModelState.IsValid == false)
+        {
+            return View("Index");
+        }
 
-    //     //now we have to hash
-    //     PasswordHasher<Product> hashBrowns = new PasswordHasher<Product>();
-    //     newProduct.Password = hashBrowns.HashPassword(newProduct, newProduct.Password);
+        _context.Add(newProduct);
+        _context.SaveChanges();
 
-    //     _context.Add(newProduct);
-    //     _context.SaveChanges();
+        return RedirectToAction("Index");
+    }
 
-    //     //now that we've run SaveChanges() we have access to the ProductId from our SQL
-    //     HttpContext.Session.SetInt32("UUID", newProduct.ProductID);
-    //     HttpContext.Session.SetString("Email", newProduct.Email);
+    [HttpGet("/products/{id}")]
+    public IActionResult ProductDetail(int id)
+    {
+        // ViewBag.AllListedCategories = _context.Categories.Include(c => c.CatWithProducts).ThenInclude(p => p.Product).Where(c => !c.CatWithProducts.Any(p => p.ProductId == ProductId));
 
-    //     return RedirectToAction("All", "Product");
-    // }
+        Product? CatInfoListedCategories = _context.Products.Include(c => c.AllCategories).ThenInclude(c => c.Categories).FirstOrDefault(c => c.ProductId == id);
+        
+        ViewBag.ListedCategories = _context.Categories.Include(c => c.AllProducts).ThenInclude(c => c.Products).Where(p => !p.AllProducts.Any(c => c.ProductId == id)).ToList();
+
+        ViewBag.AssociatedCategories = _context.Categories.Include(c => c.AllProducts).ThenInclude(c => c.Products).Where(c => c.AllProducts.Any(c => c.ProductId == id)).ToList();
+
+
+        ViewBag.SingleProduct = _context.Products.FirstOrDefault(p => p.ProductId == id);
+
+        return View("ProductsViewOne", CatInfoListedCategories);
+    }
+    
+    [HttpPost("/products/{id}/add")]
+    public IActionResult AddProduct(Product product)
+    {
+        if(ModelState.IsValid)
+        {
+            product.UpdatedAt = DateTime.Now;
+            _context.Products.Add(product);
+            _context.SaveChanges();
+            return RedirectToAction("ProductsViewOne");
+        }
+        return RedirectToAction("ProductsViewOne");
+    }
 
 //     [HttpPost("/login")]
 //     public IActionResult Login(LoginProduct loginProduct)

@@ -16303,8 +16303,18 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\Categories\\CategoryViewOne.cshtml",
+      "TargetPath": "Views\\Categories\\CategoryViewOne.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\_ViewImports.cshtml",
       "TargetPath": "Views\\_ViewImports.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\Products\\Index.cshtml",
+      "TargetPath": "Views\\Products\\Index.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -16313,13 +16323,18 @@
       "FileKind": "mvc"
     },
     {
-      "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\Home\\Index.cshtml",
-      "TargetPath": "Views\\Home\\Index.cshtml",
+      "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\Categories\\Category.cshtml",
+      "TargetPath": "Views\\Categories\\Category.cshtml",
       "FileKind": "mvc"
     },
     {
       "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Raph\\Desktop\\Csharp\\PnC\\Views\\Products\\ProductsViewOne.cshtml",
+      "TargetPath": "Views\\Products\\ProductsViewOne.cshtml",
       "FileKind": "mvc"
     },
     {
